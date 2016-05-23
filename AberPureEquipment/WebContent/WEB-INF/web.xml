@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+	
+  <display-name>pureEquipment</display-name>
+
+  <listener>
+    <listener-class>uk.ac.aber.pure.jersey.JerseyServletContext</listener-class>
+  </listener>
+ 
+  <!-- Default temp dir will be used if param is not specified -->
+  <!--
+  <context-param>
+    <param-name>files.tempdir</param-name>
+    <param-value>/path/to/tempdir</param-value>
+  </context-param>
+  -->
+  
+  <!-- Temp files will be deleted when servlet container is shutdown if param is not specified -->
+  <!-- Value specified in milliseconds; 86400000 = 24 hours -->
+  <context-param>
+    <param-name>files.timetolive</param-name>
+    <param-value>86400000</param-value>
+  </context-param>
+  
+  <context-param>
+    <param-name>pure.resource.equipment</param-name>
+    <param-value>equipments</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>pure.service.url</param-name>
+    <param-value>http://pure.aber.ac.uk/ws/rest</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>pure.service.render.value</param-name>
+    <param-value>xml_long</param-value>
+  </context-param>
+  
+  <context-param>
+    <param-name>pure.service.window.size.value</param-name>
+    <param-value>20</param-value>
+  </context-param>
+  
+  <context-param>
+    <param-name>pure.service.render.param</param-name>
+    <param-value>rendering</param-value>
+  </context-param>
+    
+  <context-param>
+    <param-name>pure.service.window.offset.param</param-name>
+    <param-value>window.offset</param-value>
+  </context-param>
+
+  <context-param>
+    <param-name>pure.service.window.size.param</param-name>
+    <param-value>window.size</param-value>
+  </context-param>
+  
+
+  <context-param>
+    <param-name>stylesheet.equipment.html</param-name>
+    <param-value>htmlStylesheet_equipment.xsl</param-value>
+  </context-param>
+  
+  <context-param>
+    <param-name>stylesheet.equipment.xml</param-name>
+    <param-value>xmlStylesheet_equipment.xsl</param-value>
+  </context-param>
+  
+  <!-- Initial request retrieves count (number of records) from service response  -->  
+  <context-param>
+    <param-name>stylesheet.count.xml</param-name>
+    <param-value>xmlStylesheet_count.xsl</param-value>
+  </context-param>
+
+  <servlet>
+    <servlet-name>org.glassfish.jersey.servlet.ServletContainer</servlet-name>
+    <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+    <init-param>
+      <param-name>jersey.config.server.provider.packages</param-name>
+      <param-value>uk.ac.aber.pure.jersey.server</param-value>
+    </init-param>
+	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+    <servlet-name>org.glassfish.jersey.servlet.ServletContainer</servlet-name>
+    <url-pattern>/*</url-pattern>
+  </servlet-mapping>
+
+ </web-app>

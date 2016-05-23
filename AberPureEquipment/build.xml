@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="PureEquipment" default="deploy">
+
+    <!-- environment -->
+    <property environment="env"/>
+    <property name="project.location" location="."/>
+    <property name="project.build.debug" value="on"/>
+
+    <!-- project workspace directories -->
+    <property name="java.dir" value="src"/>
+    <property name="resources.dir" value="resources"/>
+    <property name="templates.dir" value="templates"/>
+    <property name="web.dir" value="WebContent"/>
+
+    <!-- compile properties -->
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/WEB-INF/classes"/>
+
+    <!-- war properties -->
+    <property name="dist.dir" value="${build.dir}/dist"/>
+    <property name="app.name" value="pureEquipment"/>
+
+    <!-- deploy properties -->
+    <property name="servlet.container" value="/Users/awc/dev/apache/tomcat"/>
+
+    <!--
+    ===================================================================
+    Classpath properties
+    ===================================================================
+    -->
+
+    <!-- the classpath for running -->
+    <path id="lib.classpath">
+        <fileset dir="${web.dir}/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+        <fileset dir="${servlet.container}/lib">
+            <include name="servlet-api.jar"/>
+        </fileset>
+    </path>
+
+    <!-- the classpath for the compile -->
+    <path id="compile.classpath">
+        <path refid="lib.classpath"/>
+    </path>
+
+    <!--
+    ===================================================================
+    TARGET : clean
+    ===================================================================
+    -->
+    <target name="clean">
+        <delete includeEmptyDirs="true" quiet="true">
+            <fileset dir="${build.dir}" includes="**/*"/>
+        </delete>
+    </target>
+
+    <!--
+    ===================================================================
+    TARGET : prepare
+    ===================================================================
+    -->
+    <target name="prepare" depends="clean">
+        <copy todir="${build.dir}">
+            <fileset dir="${web.dir}">
+            	<include name="**/*"/>
+            </fileset>
+        </copy>
+        <mkdir dir="${classes.dir}"/>
+    </target>
+
+    <!--
+    ===================================================================
+    TARGET : compile.java
+    ===================================================================
+    -->
+    <target name="compile" depends="prepare">
+        <echo message="==================================================================="/>
+        <echo message="Compile configuration:"/>
+        <echo message="java.dir       = ${java.dir}"/>
+        <echo message="classes.dir    = ${classes.dir}"/>
+        <echo message="==================================================================="/>
+        <javac srcdir="${java.dir}" destdir="${classes.dir}" debug="${project.build.debug}" classpathref="compile.classpath" includeantruntime="true">
+            <include name="**/*.java"/>
+            <compilerarg value="-proc:none"/>
+        </javac>
+    </target>
+
+    <target name="dist" depends="compile" description="Create binary distribution">
+    	<copy todir="${build.dir}/WEB-INF/classes">
+            <fileset dir="${resources.dir}">
+                <include name="*.properties"/>
+            </fileset>
+        </copy>
+    	
+    	<copy todir="${build.dir}/WEB-INF/classes">
+            <fileset dir="${templates.dir}">
+                <include name="*.xsl"/>
+            </fileset>
+        </copy>
+        <jar jarfile="${dist.dir}/${app.name}.war" basedir="${build.dir}"/>
+    </target>
+
+    <target name="deploy" depends="dist" description="Deploy to Servlet container">
+        <delete dir="${servlet.container}/work/Catalina/localhost/${app.name}"/>
+        <delete file="${servlet.container}/webapps/${app.name}.war"/>
+        <delete dir="${servlet.container}/webapps/${app.name}"/>
+
+        <copy todir="${servlet.container}/webapps/">
+            <fileset dir="${dist.dir}">
+                <include name="${app.name}.war"/>
+            </fileset>
+        </copy>
+    	
+    	<!-- <antcall target="clean"/> -->
+    </target>
+	
+</project>
