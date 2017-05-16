@@ -21,7 +21,7 @@
     <property name="app.name" value="pureEquipment"/>
 
     <!-- deploy properties -->
-    <property name="servlet.container" value="/Users/awc/dev/apache/tomcat"/>
+    <property name="servlet.container" value="/Users/awc/dev/tomcat"/>
 
     <!--
     ===================================================================
