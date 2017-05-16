@@ -27,11 +27,11 @@ public class JerseyServletContext implements ServletContextListener {
 			log.debug("Init parameter " + paramName + ": " + paramValue);
         }
         
-        if (!params.containsKey(InitParameters.FILES_TEMPDIR)) {
+        if (!params.containsKey(InitParameters.FILES_TEMP_DIR)) {
             try {
     			String tempDir = ((File)servletContext.getAttribute(ServletContext.TEMPDIR)).getCanonicalPath();
-    			params.put(InitParameters.FILES_TEMPDIR, tempDir);
-    			log.debug("Init parameter " + InitParameters.FILES_TEMPDIR + ": " + tempDir);
+    			params.put(InitParameters.FILES_TEMP_DIR, tempDir);
+    			log.debug("Init parameter " + InitParameters.FILES_TEMP_DIR + ": " + tempDir);
             } catch (IOException e) {
     			e.printStackTrace();
     		}  

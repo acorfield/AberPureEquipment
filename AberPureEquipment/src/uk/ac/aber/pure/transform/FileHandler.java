@@ -30,14 +30,14 @@ public class FileHandler {
     private static final Logger log = Logger.getLogger(FileHandler.class);
 	
 	public Path getNewTempDir(String prefix) throws IOException {	
-		Path tempDir = Files.createTempDirectory(Paths.get(InitParameters.getString(InitParameters.FILES_TEMPDIR)), prefix);
+		Path tempDir = Files.createTempDirectory(Paths.get(InitParameters.getString(InitParameters.FILES_TEMP_DIR)), prefix);
 		tempDir.toFile().deleteOnExit();
 		log.debug("Created temp directory " + tempDir.toString());
 		return tempDir;
 	}
 	
 	public Path getTempDir(String prefix) throws IOException {
-		DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(InitParameters.getString(InitParameters.FILES_TEMPDIR)));
+		DirectoryStream<Path> dirStream = Files.newDirectoryStream(Paths.get(InitParameters.getString(InitParameters.FILES_TEMP_DIR)));
 		TreeMap<Long,Path> tempDirs = new TreeMap<Long, Path>();
 		for (Path path : dirStream) {
 			if (path.getFileName().toString().startsWith(prefix)) {			
@@ -64,26 +64,27 @@ public class FileHandler {
 		if (tempDirs.size() == 0)
 			return null;	
 
-		//Remove most recent directory 
+		//Get most recent directory 
 		Map.Entry<Long,Path> mostRecent = tempDirs.pollLastEntry();
-		//Don't purge directories, just return most recent if negative value for timeToLive
-		if (InitParameters.getLong(InitParameters.FILES_TIMETOLIVE) < 0)
+		//Don't purge older directories, just return most recent if negative value for timeToLive
+		if (InitParameters.getLong(InitParameters.FILES_TIME_TO_LIVE) < 0)
 			return mostRecent.getValue();
 
-		//Delete remaining older directories
-		log.debug("purging old temp directorie(s) " + tempDirs.size());
+		//Purge any remaining older directories
 		Iterator<Path> it = tempDirs.values().iterator();	
 		while (it.hasNext()) {
+			log.debug("purging older temp directory..");
 			delete(it.next());
 		}
-		//TODO Delete only if Pure service is up
+		
+		//TODO Delete only if Pure service is up?
 		//Delete most recent if creation time past time to live
-		if (mostRecent.getKey() < System.currentTimeMillis() - InitParameters.getLong(InitParameters.FILES_TIMETOLIVE)) {
-			log.debug("purging temp directory created " + new Date(mostRecent.getKey()));
+		if (mostRecent.getKey() < System.currentTimeMillis() - InitParameters.getLong(InitParameters.FILES_TIME_TO_LIVE)) {
+			log.debug("purging most recent temp directory (time to live has passed) created  " + new Date(mostRecent.getKey()));
 			delete(mostRecent.getValue());
 			return null;
 		} else {
-			return mostRecent.getValue();			
+			return mostRecent.getValue();	
 		}		
 	}
 
@@ -94,21 +95,30 @@ public class FileHandler {
 		return tempFile;
 	}
 	
+	public void purgePureXmlFiles(Path tempDirPath, Path keepFilePath) throws IOException {
+		if (!InitParameters.getBoolean(InitParameters.FILES_KEEP_XML))
+			delete(tempDirPath, keepFilePath);
+	}
+	
+	private void delete(Path path) throws IOException {
+		delete(path, null);
+	}
 	//recursive delete
-	private void delete(Path path) throws IOException {		
-		if (Files.isDirectory(path)) {
-			DirectoryStream<Path> dirStream = Files.newDirectoryStream(path);
-			for (Path p : dirStream) {
-				delete(p);				
+	private void delete(Path path, Path keepFilePath) throws IOException {		
+		if (keepFilePath == null || !path.equals(keepFilePath)) {
+			if (Files.isDirectory(path)) {
+				DirectoryStream<Path> dirStream = Files.newDirectoryStream(path);
+				for (Path p : dirStream) {
+					delete(p, keepFilePath);
+				}
+				dirStream.close();
 			}
-			dirStream.close();
-		}
-		
-		try {
-			Files.delete(path);
-			log.debug("Deleted temp file " + path.toString());
-		} catch (DirectoryNotEmptyException e) {
-			//Don't delete if directory still contains files e.g. keepXml or keepHtml 
+			try {
+				Files.delete(path);
+				log.debug("Deleted temp file " + path.toString());
+			} catch (DirectoryNotEmptyException e) {
+				//Don't delete directory if it contains files
+			}				
 		}	
 	}
 	

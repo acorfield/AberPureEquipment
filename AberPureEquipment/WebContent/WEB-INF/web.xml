@@ -22,7 +22,12 @@
     <param-name>files.timetolive</param-name>
     <param-value>86400000</param-value>
   </context-param>
-  
+
+  <context-param>
+    <param-name>files.keepxml</param-name>
+    <param-value>false</param-value>
+  </context-param>
+    
   <context-param>
     <param-name>pure.resource.equipment</param-name>
     <param-value>equipments</param-value>

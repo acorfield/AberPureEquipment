@@ -3,8 +3,9 @@ package uk.ac.aber.pure.jersey;
 import java.util.HashMap;
 
 public class InitParameters {
-	public static final String FILES_TEMPDIR = "files.tempdir";
-	public static final String FILES_TIMETOLIVE = "files.timetolive";
+	public static final String FILES_TEMP_DIR = "files.tempdir";
+	public static final String FILES_TIME_TO_LIVE = "files.timetolive";
+	public static final String FILES_KEEP_XML = "files.keepxml";
 	
 	public static final String STYLESHEET_EQUIPMENT_XML = "stylesheet.equipment.xml";
 	public static final String STYLESHEET_EQUIPMENT_HTML = "stylesheet.equipment.html";
@@ -27,6 +28,10 @@ public class InitParameters {
 		InitParameters.initParameters = params;
 	}
 
+	public static Boolean getBoolean(String key) {
+		return new Boolean(initParameters.get(key));
+	}
+	
 	public static String getString(String key) {
 		return initParameters.get(key);
 	}
