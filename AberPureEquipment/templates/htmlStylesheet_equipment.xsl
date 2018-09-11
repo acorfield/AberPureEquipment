@@ -79,7 +79,7 @@
 				<xsl:for-each select="current-group()">
 					
 		 			<!-- TODO Fix this? --> 	
-					<xsl:if test="stab:availableForLoan = true() and (stab:decommissionDate/@xsi:nil='true' or (not(stab:decommissionDate/@xsi:nil='true') and xs:date(stab:decommissionDate) gt current-date()))">
+					<!-- <xsl:if test="stab:availableForLoan = true() and (stab:decommissionDate/@xsi:nil='true' or (not(stab:decommissionDate/@xsi:nil='true') and xs:date(stab:decommissionDate) gt current-date()))"> -->
 
 						<div class="pure_item">
 
@@ -130,7 +130,7 @@
 								<span class="pure_label">Equipment Location</span><span><xsl:apply-templates select="stab:location"/></span>
 							</div>																							
 						</div>
-					</xsl:if>
+					<!-- </xsl:if> -->
 				</xsl:for-each>				
 			</xsl:for-each-group>
 		</div>
