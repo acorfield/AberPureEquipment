@@ -50,7 +50,7 @@
 	 		<xsl:for-each select="$nodes/equipment-base_uk:GetEquipmentsResponse/core:result/core:content">
 	 			<!-- TODO Fix this? -->
 	 				
-				<xsl:if test="stab:availableForLoan = true() and (stab:decommissionDate/@xsi:nil='true' or (not(stab:decommissionDate/@xsi:nil='true') and xs:date(stab:decommissionDate) gt current-date()))">
+				<!-- <xsl:if test="stab:availableForLoan = true() and (stab:decommissionDate/@xsi:nil='true' or (not(stab:decommissionDate/@xsi:nil='true') and xs:date(stab:decommissionDate) gt current-date()))"> -->
 				
 					<xsl:variable name="equipmentType"><xsl:value-of select="substring-before(core:portalUrl,'.html')"/></xsl:variable>
 					
@@ -66,7 +66,7 @@
 							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
-				</xsl:if>
+				<!-- </xsl:if> -->
 			</xsl:for-each>
 				
 			<xsl:for-each-group select="$nodes/equipment-base_uk:GetEquipmentsResponse/core:result/core:content" group-by="equipment-template:responsiblePerson">
